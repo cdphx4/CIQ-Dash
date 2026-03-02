@@ -548,7 +548,9 @@ export default function SkiPinDashboard() {
 
           <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
             <p style={{ color: PISTE.slate, fontSize: '11px', margin: 0 }}>
-              app-developer.garmin.com → Merchant Account → Documents → + Request
+              <a href="https://apps-developer.garmin.com/developer/dashboard?dashboardTab=2&merchantDashboard=documents" target="_blank" rel="noopener noreferrer" style={{ color: PISTE.slate, textDecoration: 'none' }}>
+                app-developer.garmin.com → Merchant Account → Documents → + Request
+              </a>
             </p>
           </div>
         </div>
