@@ -579,6 +579,9 @@ export default function SkiPinDashboard() {
         .card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
         .stat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); }
         .recharts-wrapper { touch-action: pan-y; -webkit-user-select: none; user-select: none; }
+        .recharts-default-tooltip { background-color: ${PISTE.dark} !important; border: 1px solid rgba(255,255,255,0.15) !important; border-radius: 8px !important; color: ${PISTE.white} !important; }
+        .recharts-tooltip-label { color: ${PISTE.white} !important; }
+        .recharts-tooltip-item { color: ${PISTE.white} !important; }
         @media (max-width: 768px) { .card { padding: 14px; border-radius: 12px; } h1 { font-size: 20px !important; } h3 { font-size: 14px !important; } }
       `}</style>
 
