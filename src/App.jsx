@@ -724,6 +724,7 @@ export default function SkiPinDashboard() {
                   ))}
                 </Pie>
                 <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: PISTE.white }}
+                  labelStyle={{ color: PISTE.white }} itemStyle={{ color: PISTE.white }}
                   formatter={(v, n, p) => [`${v} sales ($${p.payload.revenue.toFixed(2)})`, p.payload.name]} />
               </PieChart>
             </ResponsiveContainer>
