@@ -648,7 +648,7 @@ export default function SkiPinDashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                 <XAxis type="number" stroke={PISTE.slate} fontSize={10} tickFormatter={v => `$${v}`} />
                 <YAxis type="category" dataKey="title" stroke="#64748b" fontSize={10} width={100} tickFormatter={t => t.length > 15 ? t.substring(0, 15) + '...' : t} />
-                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(168, 85, 247, 0.3)', borderRadius: '12px' }} formatter={(v, name) => [name === 'revenue' ? `$${v.toFixed(2)}` : v, name === 'revenue' ? 'Revenue' : 'Sales']} />
+                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(168, 85, 247, 0.3)', borderRadius: '12px', color: PISTE.white }} formatter={(v, name) => [name === 'revenue' ? `$${v.toFixed(2)}` : v, name === 'revenue' ? 'Revenue' : 'Sales']} />
                 <Bar dataKey="revenue" fill="#a78bfa" radius={[0, 6, 6, 0]} name="revenue" />
               </BarChart>
             </ResponsiveContainer>
@@ -686,7 +686,7 @@ export default function SkiPinDashboard() {
               <XAxis dataKey="date" tickFormatter={formatDate} stroke={PISTE.slate} fontSize={10} />
               <YAxis yAxisId="left" stroke={PISTE.green} fontSize={10} tickFormatter={v => `$${v}`} />
               <YAxis yAxisId="right" orientation="right" stroke={PISTE.blue} fontSize={10} />
-              <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px' }}
+              <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: PISTE.white }}
                 formatter={(value, name) => [name === 'cumRevenue' ? `$${value.toFixed(2)}` : value, name === 'cumRevenue' ? 'Revenue' : 'Sales']}
                 labelFormatter={formatDate} />
               <Area yAxisId="left" type="monotone" dataKey="cumRevenue" stroke={PISTE.green} strokeWidth={2} fill="url(#gradientRevenue)" />
@@ -703,7 +703,7 @@ export default function SkiPinDashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis dataKey="date" tickFormatter={formatDate} stroke={PISTE.slate} fontSize={9} angle={-45} textAnchor="end" height={50} />
               <YAxis stroke={PISTE.slate} fontSize={10} allowDecimals={false} />
-              <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px' }} formatter={(v) => [v, 'Sales']} labelFormatter={formatDate} />
+              <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: PISTE.white }} formatter={(v) => [v, 'Sales']} labelFormatter={formatDate} />
               <Bar dataKey="sales" fill={PISTE.blue} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -750,7 +750,7 @@ export default function SkiPinDashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis dataKey="week" tickFormatter={formatDateSafe} stroke={PISTE.slate} fontSize={10} />
               <YAxis stroke={PISTE.slate} fontSize={10} tickFormatter={v => `$${v}`} />
-              <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px' }}
+              <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: PISTE.white }}
                 formatter={(v) => [`$${v.toFixed(2)}`, 'Revenue']}
                 labelFormatter={(w) => {
                   const match = w.match(/(\d{4})-(\d{2})-(\d{2})/);
@@ -774,7 +774,7 @@ export default function SkiPinDashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis type="number" stroke={PISTE.slate} fontSize={10} />
               <YAxis type="category" dataKey="day" stroke={PISTE.slate} fontSize={10} width={35} />
-              <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px' }} formatter={(v) => [v, 'Sales']} />
+              <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: PISTE.white }} formatter={(v) => [v, 'Sales']} />
               <Bar dataKey="sales" fill={PISTE.orange} radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -788,7 +788,7 @@ export default function SkiPinDashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis dataKey="hour" stroke={PISTE.slate} fontSize={9} interval={3} />
               <YAxis stroke={PISTE.slate} fontSize={10} allowDecimals={false} />
-              <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px' }} formatter={(v) => [v, 'Sales']} />
+              <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: PISTE.white }} formatter={(v) => [v, 'Sales']} />
               <Bar dataKey="sales" fill={PISTE.blue} radius={[2, 2, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -832,7 +832,7 @@ export default function SkiPinDashboard() {
                 <XAxis dataKey="date" tickFormatter={formatDateSafe} stroke={PISTE.slate} fontSize={9} interval={5} />
                 <YAxis yAxisId="revenue" stroke={PISTE.green} fontSize={10} tickFormatter={v => `$${Math.round(v)}`} />
                 <YAxis yAxisId="sales" orientation="right" stroke={PISTE.blue} fontSize={10} />
-                <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px' }}
+                <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: PISTE.white }}
                   formatter={(value, name) => {
                     if (name === 'cumRevenue') return [`$${value.toFixed(2)}`, 'Revenue'];
                     if (name === 'cumSales') return [Math.round(value), 'Sales'];
