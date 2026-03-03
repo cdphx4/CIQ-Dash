@@ -881,8 +881,21 @@ export default function SkiPinDashboard() {
         )}
       </div>
 
-      <div style={{ marginTop: '24px', textAlign: 'center', color: PISTE.slate, fontSize: '11px', position: 'relative', zIndex: 1 }}>
+      <div style={{ marginTop: '24px', textAlign: 'center', color: PISTE.slate, fontSize: '11px', position: 'relative', zIndex: 1, paddingBottom: '8px' }}>
         CIQ Sales Dashboard • Track your Connect IQ success
+        <div style={{ marginTop: '8px' }}>
+          If you find this useful,{' '}
+          <a
+            href="https://buymeacoffee.com/chaphi"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: PISTE.orange, textDecoration: 'none', fontWeight: '500' }}
+            onMouseEnter={e => e.target.style.textDecoration = 'underline'}
+            onMouseLeave={e => e.target.style.textDecoration = 'none'}
+          >
+            buy me a coffee ☕
+          </a>
+        </div>
       </div>
     </div>
   );
