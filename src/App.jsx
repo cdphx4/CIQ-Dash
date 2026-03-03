@@ -546,15 +546,19 @@ export default function SkiPinDashboard() {
             Load Sample Data
           </button>
 
-          <a
-            href="https://apps-developer.garmin.com/developer/dashboard?dashboardTab=2&merchantDashboard=documents"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="app-developer.garmin.com → Merchant Account → Documents → + Request"
-            style={{ display: 'inline-block', marginTop: '16px', color: PISTE.slate, fontSize: '11px', textDecoration: 'none' }}
-          >
-            📄 Get Sales Report ↗
-          </a>
+          <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
+            <p style={{ color: PISTE.slate, fontSize: '11px', margin: 0 }}>
+              <a
+                href="https://apps-developer.garmin.com/developer/dashboard?dashboardTab=2&merchantDashboard=documents"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="app-developer.garmin.com → Merchant Account → Documents → + Request"
+                style={{ color: PISTE.slate, textDecoration: 'none' }}
+              >
+                📄 Get Sales Report ↗
+              </a>
+            </p>
+          </div>
 
           <p style={{ marginTop: '20px', marginBottom: 0, fontSize: '11px', color: PISTE.slate }}>
             If you find this useful,{' '}
