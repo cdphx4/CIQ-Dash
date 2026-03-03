@@ -514,7 +514,7 @@ export default function SkiPinDashboard() {
             <h1 style={{ color: PISTE.white, fontSize: '28px', fontWeight: '700', marginBottom: '8px', letterSpacing: '-0.5px' }}>
               CIQ Sales Dashboard
             </h1>
-            <p style={{ color: PISTE.slate, fontSize: '14px' }}>Track your Connect IQ sales</p>
+            <p style={{ color: PISTE.slate, fontSize: '14px' }}>Visualize your Connect IQ sales</p>
           </div>
 
           <label style={{
@@ -608,13 +608,13 @@ export default function SkiPinDashboard() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+          <div onClick={() => setRawData([])} style={{ display: 'flex', gap: '6px', alignItems: 'center', cursor: 'pointer' }}>
             <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: PISTE.green }} />
             <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: PISTE.blue }} />
             <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: PISTE.orange, transform: 'rotate(45deg)' }} />
           </div>
           <div>
-            <h1 style={{ fontSize: '24px', fontWeight: '700', margin: 0, letterSpacing: '-0.5px', color: PISTE.white }}>CIQ Sales Dashboard</h1>
+            <h1 onClick={() => setRawData([])} style={{ fontSize: '24px', fontWeight: '700', margin: 0, letterSpacing: '-0.5px', color: PISTE.white, cursor: 'pointer' }}>CIQ Sales Dashboard</h1>
             <p style={{ color: PISTE.slate, margin: 0, fontSize: '12px' }}>
               {selectedApp !== 'all' && stats.appList.find(a => a.id === selectedApp)?.title && (
                 <span style={{ color: PISTE.blue }}>
@@ -902,7 +902,7 @@ export default function SkiPinDashboard() {
       </div>
 
       <div style={{ marginTop: '24px', textAlign: 'center', color: PISTE.slate, fontSize: '11px', position: 'relative', zIndex: 1, paddingBottom: '8px' }}>
-        CIQ Sales Dashboard • Track your Connect IQ success
+        CIQ Sales Dashboard • Visualize your Connect IQ sales
         <div style={{ marginTop: '8px' }}>
           If you find this useful,{' '}
           <a
