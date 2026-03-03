@@ -553,6 +553,20 @@ export default function SkiPinDashboard() {
               </a>
             </p>
           </div>
+
+          <p style={{ marginTop: '20px', marginBottom: 0, fontSize: '11px', color: PISTE.slate }}>
+            If you find this useful,{' '}
+            <a
+              href="https://buymeacoffee.com/chaphi"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: PISTE.orange, textDecoration: 'none', fontWeight: '500' }}
+              onMouseEnter={e => e.target.style.textDecoration = 'underline'}
+              onMouseLeave={e => e.target.style.textDecoration = 'none'}
+            >
+              buy me a coffee ☕
+            </a>
+          </p>
         </div>
       </div>
     );
