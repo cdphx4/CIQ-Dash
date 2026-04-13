@@ -203,7 +203,19 @@ export default function SkiPinDashboard() {
       byDate[date].sales++;
       byDate[date].revenue += parseFloat(r['Developer Share'] || 0);
     });
-    const dailyData = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
+    const sortedDays = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
+    const dailyData = (() => {
+      if (sortedDays.length < 2) return sortedDays;
+      const result = [];
+      const cur = new Date(sortedDays[0].date + 'T00:00:00Z');
+      const end = new Date(sortedDays[sortedDays.length - 1].date + 'T00:00:00Z');
+      while (cur <= end) {
+        const dateStr = cur.toISOString().split('T')[0];
+        result.push(byDate[dateStr] || { date: dateStr, sales: 0, revenue: 0 });
+        cur.setUTCDate(cur.getUTCDate() + 1);
+      }
+      return result;
+    })();
 
     let cumRevenue = 0, cumSales = 0;
     const cumulativeData = dailyData.map(d => {
