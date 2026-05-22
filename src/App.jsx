@@ -26,6 +26,29 @@ const COLORS = [
   '#8b5cf6', '#ec4899', '#65a30d', '#14b8a6'
 ];
 
+// Symbol lookup for common currencies that may appear in Connect IQ payouts.
+// Codes not in the map fall back to "CODE " prefix (e.g. "NOK 12.34").
+const CURRENCY_SYMBOLS = {
+  USD: '$',  EUR: '€',  GBP: '£',  JPY: '¥',  CNY: '¥',
+  CAD: 'CA$', AUD: 'A$', NZD: 'NZ$', CHF: 'CHF',
+  SEK: 'kr', NOK: 'kr', DKK: 'kr', PLN: 'zł',
+  BRL: 'R$', INR: '₹', KRW: '₩', MXN: 'MX$',
+  HKD: 'HK$', SGD: 'S$', TWD: 'NT$', ZAR: 'R',
+  CZK: 'Kč', HUF: 'Ft', ILS: '₪', RUB: '₽', THB: '฿', TRY: '₺',
+};
+
+const symbolFor = (code) => CURRENCY_SYMBOLS[code] || `${code} `;
+
+// Format a numeric value with the detected currency symbol.
+// Multi-letter symbols (CHF, kr, Kč...) get a thin space; glyphs ($, €, £...) sit flush.
+const fmtMoney = (value, code, opts = {}) => {
+  const { fractionDigits = 2 } = opts;
+  const num = Number(value) || 0;
+  const sym = symbolFor(code);
+  const needsSpace = sym.length > 2 && !sym.endsWith('$');
+  return `${sym}${needsSpace ? ' ' : ''}${num.toFixed(fractionDigits)}`;
+};
+
 const parseDate = (dateStr) => {
   if (!dateStr) return null;
   const dateMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
@@ -179,6 +202,20 @@ export default function SkiPinDashboard() {
   const stats = useMemo(() => {
     if (!rawData.length) return null;
 
+    // Detect currency from the "Share Currency" column. Use the most common
+    // value across rows so a stray row with a different code can't break the UI.
+    const currencyCounts = new Map();
+    rawData.forEach(r => {
+      const c = (r['Share Currency'] || '').trim().toUpperCase();
+      if (c) currencyCounts.set(c, (currencyCounts.get(c) || 0) + 1);
+    });
+    let currency = 'USD';
+    let topCount = 0;
+    for (const [code, count] of currencyCounts) {
+      if (count > topCount) { topCount = count; currency = code; }
+    }
+    const currencyMixed = currencyCounts.size > 1;
+
     const appSet = new Map();
     rawData.forEach(r => {
       const title = r['Title'] || 'Unknown App';
@@ -295,7 +332,7 @@ export default function SkiPinDashboard() {
     if (dailyData.length > 0 && cumulativeData.length > 0) {
       const lastDateStr = dailyData[dailyData.length - 1].date;
       const lastMatch = lastDateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
-      if (!lastMatch) return { totalRevenue, totalSales, avgSale, dailyData, cumulativeData, countryData, weeklyData, dayOfWeekData, hourlyData, forecastData, forecastSummary, dowMultipliers, appList, hasMultipleApps };
+      if (!lastMatch) return { totalRevenue, totalSales, avgSale, dailyData, cumulativeData, countryData, weeklyData, dayOfWeekData, hourlyData, forecastData, forecastSummary, dowMultipliers, appList, hasMultipleApps, currency, currencyMixed };
 
       const [, lastYear, lastMonth, lastDay] = lastMatch;
       const lastDate = new Date(Date.UTC(+lastYear, +lastMonth - 1, +lastDay));
@@ -344,7 +381,7 @@ export default function SkiPinDashboard() {
       };
     }
 
-    return { totalRevenue, totalSales, avgSale, dailyData, cumulativeData, countryData, weeklyData, dayOfWeekData, hourlyData, forecastData, forecastSummary, dowMultipliers, appList, hasMultipleApps };
+    return { totalRevenue, totalSales, avgSale, dailyData, cumulativeData, countryData, weeklyData, dayOfWeekData, hourlyData, forecastData, forecastSummary, dowMultipliers, appList, hasMultipleApps, currency, currencyMixed };
   }, [rawData, selectedApp]);
 
   const formatDate = formatDateSafe;
@@ -649,9 +686,9 @@ export default function SkiPinDashboard() {
       {/* Key Metrics */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))', gap: '10px', marginBottom: '16px', position: 'relative', zIndex: 1 }}>
         {[
-          { label: 'Revenue', value: `$${stats.totalRevenue.toFixed(2)}`, color: PISTE.green },
+          { label: 'Revenue', value: fmtMoney(stats.totalRevenue, stats.currency), color: PISTE.green },
           { label: 'Sales', value: stats.totalSales, color: PISTE.blue },
-          { label: 'Avg/Sale', value: `$${stats.avgSale.toFixed(2)}`, color: PISTE.orange },
+          { label: 'Avg/Sale', value: fmtMoney(stats.avgSale, stats.currency), color: PISTE.orange },
           { label: 'Countries', value: stats.countryData.length, color: PISTE.white }
         ].map((stat, i) => (
           <div key={i} className="card stat-card" style={{ padding: '14px' }}>
@@ -669,9 +706,9 @@ export default function SkiPinDashboard() {
             <ResponsiveContainer width="100%" height={Math.max(160, stats.appList.length * 36)}>
               <BarChart data={stats.appList} layout="vertical" margin={{ left: 10, right: 10, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                <XAxis type="number" stroke={PISTE.slate} fontSize={10} tickFormatter={v => `$${v}`} />
+                <XAxis type="number" stroke={PISTE.slate} fontSize={10} tickFormatter={v => fmtMoney(v, stats.currency, { fractionDigits: 0 })} />
                 <YAxis type="category" dataKey="title" stroke="#64748b" fontSize={10} width={100} tickFormatter={t => t.length > 15 ? t.substring(0, 15) + '...' : t} />
-                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(168, 85, 247, 0.3)', borderRadius: '12px', color: PISTE.white }} formatter={(v, name) => [name === 'revenue' ? `$${v.toFixed(2)}` : v, name === 'revenue' ? 'Revenue' : 'Sales']} />
+                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(168, 85, 247, 0.3)', borderRadius: '12px', color: PISTE.white }} formatter={(v, name) => [name === 'revenue' ? fmtMoney(v, stats.currency) : v, name === 'revenue' ? 'Revenue' : 'Sales']} />
                 <Bar dataKey="revenue" fill="#a78bfa" radius={[0, 6, 6, 0]} name="revenue" />
               </BarChart>
             </ResponsiveContainer>
@@ -682,7 +719,7 @@ export default function SkiPinDashboard() {
                 style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)' }}>
                 <div style={{ fontSize: '12px', fontWeight: '500', color: '#e2e8f0', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{app.title}</div>
                 <div style={{ display: 'flex', gap: '12px', fontSize: '11px', color: '#94a3b8' }}>
-                  <span><span style={{ color: '#a78bfa', fontWeight: '600' }}>${app.revenue.toFixed(2)}</span></span>
+                  <span><span style={{ color: '#a78bfa', fontWeight: '600' }}>{fmtMoney(app.revenue, stats.currency)}</span></span>
                   <span><span style={{ color: '#60a5fa', fontWeight: '600' }}>{app.sales}</span> sales</span>
                 </div>
               </div>
@@ -707,10 +744,10 @@ export default function SkiPinDashboard() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis dataKey="date" tickFormatter={formatDate} stroke={PISTE.slate} fontSize={10} />
-              <YAxis yAxisId="left" stroke={PISTE.green} fontSize={10} tickFormatter={v => `$${v}`} />
+              <YAxis yAxisId="left" stroke={PISTE.green} fontSize={10} tickFormatter={v => fmtMoney(v, stats.currency, { fractionDigits: 0 })} />
               <YAxis yAxisId="right" orientation="right" stroke={PISTE.blue} fontSize={10} />
               <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: PISTE.white }}
-                formatter={(value, name) => [name === 'cumRevenue' ? `$${value.toFixed(2)}` : value, name === 'cumRevenue' ? 'Revenue' : 'Sales']}
+                formatter={(value, name) => [name === 'cumRevenue' ? fmtMoney(value, stats.currency) : value, name === 'cumRevenue' ? 'Revenue' : 'Sales']}
                 labelFormatter={formatDate} />
               <Area yAxisId="left" type="monotone" dataKey="cumRevenue" stroke={PISTE.green} strokeWidth={2} fill="url(#gradientRevenue)" />
               <Line yAxisId="right" type="monotone" dataKey="cumSales" stroke={PISTE.blue} strokeWidth={2} dot={false} />
@@ -748,7 +785,7 @@ export default function SkiPinDashboard() {
                 </Pie>
                 <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: PISTE.white }}
                   labelStyle={{ color: PISTE.white }} itemStyle={{ color: PISTE.white }}
-                  formatter={(v, n, p) => [`${v} sales ($${p.payload.revenue.toFixed(2)})`, p.payload.name]} />
+                  formatter={(v, n, p) => [`${v} sales (${fmtMoney(p.payload.revenue, stats.currency)})`, p.payload.name]} />
               </PieChart>
             </ResponsiveContainer>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px', maxHeight: '120px', overflowY: 'auto' }}>
@@ -773,9 +810,9 @@ export default function SkiPinDashboard() {
             <BarChart data={stats.weeklyData}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis dataKey="week" tickFormatter={formatDateSafe} stroke={PISTE.slate} fontSize={10} />
-              <YAxis stroke={PISTE.slate} fontSize={10} tickFormatter={v => `$${v}`} />
+              <YAxis stroke={PISTE.slate} fontSize={10} tickFormatter={v => fmtMoney(v, stats.currency, { fractionDigits: 0 })} />
               <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: PISTE.white }}
-                formatter={(v) => [`$${v.toFixed(2)}`, 'Revenue']}
+                formatter={(v) => [fmtMoney(v, stats.currency), 'Revenue']}
                 labelFormatter={(w) => {
                   const match = w.match(/(\d{4})-(\d{2})-(\d{2})/);
                   if (!match) return w;
@@ -835,7 +872,7 @@ export default function SkiPinDashboard() {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <p style={{ margin: 0, fontSize: '10px', color: PISTE.slate, textTransform: 'uppercase', letterSpacing: '1px' }}>Revenue</p>
-                  <p style={{ margin: 0, fontSize: '18px', fontWeight: '700', fontFamily: "'JetBrains Mono', monospace", color: PISTE.green }}>+${stats.forecastSummary.projectedRevenue}</p>
+                  <p style={{ margin: 0, fontSize: '18px', fontWeight: '700', fontFamily: "'JetBrains Mono', monospace", color: PISTE.green }}>+{fmtMoney(stats.forecastSummary.projectedRevenue, stats.currency)}</p>
                 </div>
               </div>
             </div>
@@ -854,11 +891,11 @@ export default function SkiPinDashboard() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                 <XAxis dataKey="date" tickFormatter={formatDateSafe} stroke={PISTE.slate} fontSize={9} interval={5} />
-                <YAxis yAxisId="revenue" stroke={PISTE.green} fontSize={10} tickFormatter={v => `$${Math.round(v)}`} />
+                <YAxis yAxisId="revenue" stroke={PISTE.green} fontSize={10} tickFormatter={v => fmtMoney(v, stats.currency, { fractionDigits: 0 })} />
                 <YAxis yAxisId="sales" orientation="right" stroke={PISTE.blue} fontSize={10} />
                 <Tooltip contentStyle={{ background: PISTE.dark, border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: PISTE.white }}
                   formatter={(value, name) => {
-                    if (name === 'cumRevenue') return [`$${value.toFixed(2)}`, 'Revenue'];
+                    if (name === 'cumRevenue') return [fmtMoney(value, stats.currency), 'Revenue'];
                     if (name === 'cumSales') return [Math.round(value), 'Sales'];
                     return [value, name];
                   }}
